@@ -10,6 +10,7 @@ import Login from './LoginForm';
 import { isLoggedIn } from './auth.js';
 import Navigation from './Nav.js';
 import Intro from './intro.js';
+import AddBooks from './AddBooks';
 
 // Routes
 import { Redirect, Route } from 'react-router-dom';
@@ -155,7 +156,7 @@ export default class App extends Component {
 
           <div className="container">
 
-          <Route path='/' exact render={(props) => {
+            <Route path='/' exact render={(props) => {
               return (
                 <div>
                   {!isAuthenticated && <Intro />}
@@ -169,16 +170,16 @@ export default class App extends Component {
                       <p>Ask your friends to join and add their books!</p>
                     </div>
                   ) : (
-                    <div>
-                      <h3>Books currently available</h3>
-                      <br />
-                
-                    </div>
-                  )}
+                      <div>
+                        <h3>Books currently available</h3>
+                        <br />
+
+                      </div>
+                    )}
                 </div>
               );
             }}
-          />
+            />
 
             <Route path='/home' render={(props) => {
               return <BookContainer books={this.state.books} />;
@@ -198,6 +199,11 @@ export default class App extends Component {
                 return <Login {...props}
                   onSubmit={this.handleSubmit} />;
               }
+            }} />
+
+
+            <Route path='/addbooks' exact {...{isAuthenticated }} render={(props) => {
+              return <AddBooks />;
             }} />
 
           </div>

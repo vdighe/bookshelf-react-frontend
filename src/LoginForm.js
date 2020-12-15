@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Button, Input, Form, Segment, Grid } from 'semantic-ui-react'
 import "semantic-ui-css/semantic.min.css";
-import { Redirect } from 'react-router-dom';
+
 
 export default class LoginForm extends Component {
     constructor(props) {
