@@ -4,7 +4,7 @@ import React from 'react';
 const Intro = () => (
   <div>
    
-      <h1>Book Trader</h1>
+      <h1>Book Shelf</h1>
       <h3>An app for trading books with your friends</h3>
 
     <div className="text-center">

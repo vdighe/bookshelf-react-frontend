@@ -25,29 +25,23 @@ const generateRandomId = (length, characters) => {
 };
 
 export default class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentUser : null,
-      redirect: null,
-      userId: null,
-      fullName: '',
-      books: [],
-      alertMessage: '',
-    }
+
+  state = {
+    currentUser: null,
+    redirect: null,
+    userId: null,
+    fullName: '',
+    books: [],
+    alertMessage: '',
   }
+
 
   componentDidMount() {
     console.log(`VAISHALI MOUNT ${this.state.userId}`);
-    if (this.state.userId) {
-      this.setState({
-        books: []
-      })
-    }
     this.getBooksByAPI(this.state.userId);
   }
 
-  
+
   //Login User http://localhost:8000/api/login
   handleSubmit = async (e, currentUser) => {
     e.preventDefault();
@@ -59,11 +53,11 @@ export default class App extends Component {
       );
       console.log(user.data.data, ' this is response');
       this.setState({
-        currentUser:user.data.data,
+        currentUser: user.data.data,
         userId: user.data.data.id,
         fullName: user.data.data.fullname,
         books: [],
-        redirect: '/myhome',
+        redirect: '/',
       });
       console.log(user.data.data, '<=== this is response');
       this.getBooksByAPI(user.data.data.id);
@@ -72,7 +66,7 @@ export default class App extends Component {
     }
   }
 
- 
+
   addBook = async (e, newBook) => {
     e.preventDefault();
     console.log(newBook);
@@ -81,7 +75,7 @@ export default class App extends Component {
       user_id: this.state.userId,
       requested_by: [],
       lend_to: null,
-      user : this.state.currentUser,
+      user: this.state.currentUser,
     };
     newBook = { ...newBook, ...moreProps };
     console.log({ newBook });
@@ -99,22 +93,21 @@ export default class App extends Component {
     } catch (err) {
       console.log('error', err);
     }
-   
+
   };
 
   getBooksByAPI = async (userId) => {
     console.log(`In getBooks ${userId}`);
     let API = '';
-    if (!userId)
-      API = process.env.REACT_APP_FLASK_API_URL + '/api/books/'
-    else {
-      API = process.env.REACT_APP_FLASK_API_URL + `/api/mybooks/user/${userId}`;
-    }
-    
+    /* if (!userId)
+       API = process.env.REACT_APP_FLASK_API_URL + '/api/books/'
+     else {
+       API = process.env.REACT_APP_FLASK_API_URL + `/api/mybooks/user/${userId}`;
+     }*/
+    API = process.env.REACT_APP_FLASK_API_URL + '/api/books/'
     try {
       console.log(API);
       const parsedBooks = await axios(API);
-
       console.log(parsedBooks.data.data);
       const parsedBooksImg = parsedBooks.data.data.map((book) => {
         const image = `https://covers.openlibrary.org/b/olid/${book.olid}-M.jpg`;
@@ -144,7 +137,9 @@ export default class App extends Component {
     const isAuthenticated = (userId && userId !== '')
     console.log('IsAuthenticated', isAuthenticated)
     console.log(this.state)
-      console.log(fullName)
+    console.log(fullName)
+    const myBooks = books.filter(b => b.user.id === userId);
+    console.log(myBooks, '<== mybooks');
     return (
       <>
         <div className='App'>
@@ -152,10 +147,14 @@ export default class App extends Component {
           />
           <div className="container">
             <Route path='/' exact render={(props) => {
+
+              const availableBooks = books
+                .filter(b => !b.lent_to)
+                .filter(b => b.user.userId !== userId);
               return (
                 <div>
                   {!isAuthenticated && <Intro />}
-                  {books.length === 0 ? (
+                  {availableBooks.length === 0 ? (
                     <div className="text-center">
                       <br />
                       <p>
@@ -168,7 +167,7 @@ export default class App extends Component {
                       <div>
                         <h3>Books currently available</h3>
                         <br />
-
+                        <BookContainer isAuthenticated={isAuthenticated} books={availableBooks} />;
                       </div>
                     )}
                 </div>
@@ -180,10 +179,71 @@ export default class App extends Component {
               return <BookContainer isAuthenticated={isAuthenticated} books={this.state.books} />;
             }} />
 
-            <Route path='/mybooks' exact {...{isAuthenticated }} render={(props) => {
-              console.log('Under myhome');
-              return <BookContainer isAuthenticated={isAuthenticated} books={this.state.books} />;
-            }} />
+            <Route path='/mybooks' exact {...{ isAuthenticated }} render={(props) => {
+             
+              const myUnlentBooks = myBooks.filter(b => !b.lent_to);
+              console.log(myUnlentBooks, '<==Unlent');
+
+              const myLentBooks = myBooks.filter(b => b.lent_to);
+              console.log(myLentBooks, '<==lent');
+
+              const requestedBooks = books.filter(
+              b => b.requested_by && b.requested_by.filter(r => r === userId).length);
+
+              console.log(requestedBooks, '<==Request');
+              const booksBorrowed = books.filter(
+                b => b.lent_to && b.lent_to.userId === userId
+              );
+              console.log(booksBorrowed, '<==Borrowed');
+              return (
+                <div>
+                  <h3>My Books (On Shelf)</h3>
+                  <br />
+                  {myUnlentBooks.length === 0 ? (
+                    <div className="text-center">
+                      <p>No books here</p>
+                    </div>
+                  ) : (
+                      <BookContainer isAuthenticated={isAuthenticated} books={myUnlentBooks} />
+                    )}
+                  <hr />
+                  <h3>Books I have Borrowed</h3>
+                  <br />
+                  {booksBorrowed.length === 0 ? (
+                    <div className="text-center">
+                      <p>No books here</p>
+                    </div>
+                  ) : (
+                      <BookContainer isAuthenticated={isAuthenticated} books={booksBorrowed} />
+
+                    )}
+                  <hr />
+                  <h3>My Books (Lent Out)</h3>
+                  <br />
+                  {myLentBooks.length === 0 ? (
+                    <div className="text-center">
+                      <p>No books here</p>
+                    </div>
+                  ) : (
+                      <BookContainer isAuthenticated={isAuthenticated} books={myLentBooks} />
+
+
+                    )}
+                  <hr />
+                  <h3>Books I have Requested</h3>
+                  <br />
+                  {requestedBooks.length === 0 ? (
+                    <div className="text-center">
+                      <p>No books here</p>
+                    </div>
+                  ) : (
+                      <BookContainer isAuthenticated={isAuthenticated} books={requestedBooks} />
+
+                    )}
+                </div>
+              );
+            }}
+            />
 
             <Route path='/login' exact render={(props) => {
               console.log('I am here login');
@@ -196,8 +256,8 @@ export default class App extends Component {
               }
             }} />
 
-            <Route path='/addbooks' exact {...{isAuthenticated }} render={(props) => {
-              return <AddBooks isAuthenticated={isAuthenticated} addBook={this.addBook} openAndEdit={this.openAndEdit} />;
+            <Route path='/addbooks' exact {...{ isAuthenticated }} render={(props) => {
+              return <AddBooks {...this.state} isAuthenticated={isAuthenticated} addBook={this.addBook} openAndEdit={this.openAndEdit} />;
             }} />
 
           </div>

@@ -77,9 +77,11 @@ export default class AddBooks extends Component {
             loading,
             searchMethod,
             searchMethodText,
-            isAuthenticated,
         } = this.state;
+        const {isAuthenticated } = this.props;
+
         console.log(this.state, '<====In AddBooks')
+        console.log(isAuthenticated, '<====In AddBooks')
         return (
             <div>
                 <h3>Search to add books you own</h3>

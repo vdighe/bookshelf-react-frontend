@@ -29,41 +29,56 @@ export default class Navigation extends Component {
         } = this.props;
         console.log(this.props);
         return (
-            <Menu secondary>
-                <Menu.Item
-                    as={NavLink} to="/home"
-                    name='home'
-                    active={activeItem === 'home'}
-                    onClick={this.handleItemClick}
-                />
-                {isAuthenticated && (
+
+            <Menu>
+                <Menu >
                     <Menu.Item
-                        as={NavLink} to="/mybooks"
-                        name='My Books'
-                        active={activeItem === 'mybooks'}
+                        as={NavLink} to="/home"
+                        name='home'
+                        active={activeItem === 'home'}
                         onClick={this.handleItemClick}
                     />
-                )}
+                    {isAuthenticated && (
+                        <Menu.Item
+                            as={NavLink} to="/mybooks"
+                            name='My Books'
+                            active={activeItem === 'mybooks'}
+                            onClick={this.handleItemClick}
+                        />
+                    )}
 
-                {isAuthenticated && (
-                    <Menu.Item
-                        as={NavLink} to="/addbooks"
-                        name='Add Books'
-                        active={activeItem === 'addbooks'}
-                        onClick={this.handleItemClick}
+                    {isAuthenticated && (
+                        <Menu.Item
+                            as={NavLink} to="/addbooks"
+                            name='Add Books'
+                            active={activeItem === 'addbooks'}
+                            onClick={this.handleItemClick}
 
-                    />
-                )}
+                        />
+                    )}
+                </Menu>
+                <Menu.Menu position="right">
+                    {isAuthenticated ? (
+                        <Menu.Item 
+                            href={`${process.env.PUBLIC_URL}/logout`}
+                            onSelect={this.close}
 
-                <Menu.Item
-                    as={NavLink} to="/login"
-                    name='Login'
-                    active={activeItem === 'login'}
-                    onSelect={this.close}
-                    onClick={this.handleItemClick}
-                />
+                        >
+                            Logout
+                    </Menu.Item>) : (
+                            <Menu.Item
+                                as={NavLink} to="/login"
+                                name='Login'
+                                active={activeItem === 'login'}
+                                onSelect={this.close}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
 
-            </Menu >
+                </Menu.Menu >
+
+            </Menu>
+
         )
     }
 }

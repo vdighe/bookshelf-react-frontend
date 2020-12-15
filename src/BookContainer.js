@@ -4,8 +4,6 @@ import BookList from './BookList';
 import { Grid } from 'semantic-ui-react';
 
 export default class BookContainer extends Component {
-
-
   render() {
     console.log(this.props.books.length);
     return (

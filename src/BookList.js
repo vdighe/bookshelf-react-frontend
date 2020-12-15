@@ -12,7 +12,7 @@ function BookList(props) {
           <Card.Description>{book.author}</Card.Description>
         </Card.Content>
         <Card.Content extra>
-          <Card.Description>Owner By:{book.user.fullname}</Card.Description>
+          <Card.Description>Owner:{book.user.fullname}</Card.Description>
         </Card.Content>     
         {props.isAuthenticated && (   
         <Card.Content extra>
