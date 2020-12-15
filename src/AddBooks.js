@@ -24,6 +24,7 @@ const searchBooks = (searchText, method) => {
                         subtitle: book.subtitle || null,
                         author: book.author_name[0],
                         olid: book.cover_edition_key,
+                        user: { fullname :''},
                         image: `https://covers.openlibrary.org/b/olid/${book.cover_edition_key}-M.jpg`,
                     };
                 });
@@ -131,11 +132,9 @@ export default class AddBooks extends Component {
                             <br />
                             {searchResults.length === 0 ? (
                                 <p>None found.</p>
-                            ) : <div>
-                                    <p>
-                                        Results are back
-                                    </p>
-                                </div>}
+                            ) : (<div>
+                                    <BookContainer books={searchResults}/>;
+                                </div>)}
                         </div>
                     )}
                 </Segment>
