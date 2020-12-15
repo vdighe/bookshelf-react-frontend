@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { Input, Menu } from 'semantic-ui-react'
+import { Menu } from 'semantic-ui-react'
 
-import { NavLink, withRouter } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 export default class Navigation extends Component {
     state = {
@@ -25,8 +25,9 @@ export default class Navigation extends Component {
         const {
             router,
             isAuthenticated,
-            displayName,
-          } = this.props;
+            fullName,
+        } = this.props;
+        console.log(this.props);
         return (
             <Menu secondary>
                 <Menu.Item
@@ -37,23 +38,23 @@ export default class Navigation extends Component {
                 />
                 {isAuthenticated && (
                     <Menu.Item
-                    as={NavLink} to="/mybooks"
-                    name='My Books'
-                    active={activeItem === 'mybooks'}
-                    onClick={this.handleItemClick}
-                />
+                        as={NavLink} to="/mybooks"
+                        name='My Books'
+                        active={activeItem === 'mybooks'}
+                        onClick={this.handleItemClick}
+                    />
                 )}
-                
+
                 {isAuthenticated && (
-                <Menu.Item
-                    as={NavLink} to="/addbooks"
-                    name='Add Books'
-                    active={activeItem === 'addbooks'}
-                    onClick={this.handleItemClick}
-            
-                />
+                    <Menu.Item
+                        as={NavLink} to="/addbooks"
+                        name='Add Books'
+                        active={activeItem === 'addbooks'}
+                        onClick={this.handleItemClick}
+
+                    />
                 )}
-                
+
                 <Menu.Item
                     as={NavLink} to="/login"
                     name='Login'
@@ -61,6 +62,7 @@ export default class Navigation extends Component {
                     onSelect={this.close}
                     onClick={this.handleItemClick}
                 />
+
             </Menu >
         )
     }

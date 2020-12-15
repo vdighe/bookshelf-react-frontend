@@ -21,7 +21,7 @@ const searchBooks = (searchText, method) => {
                 .map(book => {
                     return {
                         title: book.title,
-                        subtitle: book.subtitle || null,
+                        subtitle: book.subtitle || '',
                         author: book.author_name[0],
                         olid: book.cover_edition_key,
                         user: { fullname :''},
@@ -77,8 +77,9 @@ export default class AddBooks extends Component {
             loading,
             searchMethod,
             searchMethodText,
+            isAuthenticated,
         } = this.state;
-
+        console.log(this.state, '<====In AddBooks')
         return (
             <div>
                 <h3>Search to add books you own</h3>
@@ -133,7 +134,7 @@ export default class AddBooks extends Component {
                             {searchResults.length === 0 ? (
                                 <p>None found.</p>
                             ) : (<div>
-                                    <BookContainer books={searchResults}/>;
+                                    <BookContainer isAuthenticated={isAuthenticated} books={searchResults} addBook={this.props.addBook}/>;
                                 </div>)}
                         </div>
                     )}

@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Button, Image } from 'semantic-ui-react';
 
 function BookList(props) {
-  console.log(props);
+  console.log(props, '<=== Boolist');
   const books = props.books.map((book) => {
     return (
       <Card key={book.id}>
@@ -13,11 +13,13 @@ function BookList(props) {
         </Card.Content>
         <Card.Content extra>
           <Card.Description>Owner By:{book.user.fullname}</Card.Description>
-        </Card.Content>        
+        </Card.Content>     
+        {props.isAuthenticated && (   
         <Card.Content extra>
           <Button onClick={() => props.deleteBook(book.id)}>DeleteBook</Button>
-          <Button onClick={() => props.openAndEdit(book)}>Edit Book</Button>
+          <Button onClick={(e) => props.addBook(e, book)}>Add Book</Button>
         </Card.Content>
+        )}
       </Card>
     );
   });

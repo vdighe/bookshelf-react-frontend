@@ -5,9 +5,8 @@ import React, { Component } from 'react';
 import './App.css';
 import BookContainer from './BookContainer';
 import axios from 'axios';
-import CreateBookForm from './CreateBookForm';
+
 import Login from './LoginForm';
-import { isLoggedIn } from './auth.js';
 import Navigation from './Nav.js';
 import Intro from './intro.js';
 import AddBooks from './AddBooks';
@@ -29,11 +28,11 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      currentUser : null,
       redirect: null,
       userId: null,
       fullName: '',
       books: [],
-      myBooks: [],
       alertMessage: '',
     }
   }
@@ -46,14 +45,9 @@ export default class App extends Component {
       })
     }
     this.getBooksByAPI(this.state.userId);
-
   }
-  /*
-    getBooks = () => {
-      console.log('Get All Books');
-      this.getBooksByAPI(null);
+
   
-    };*/
   //Login User http://localhost:8000/api/login
   handleSubmit = async (e, currentUser) => {
     e.preventDefault();
@@ -65,24 +59,29 @@ export default class App extends Component {
       );
       console.log(user.data.data, ' this is response');
       this.setState({
+        currentUser:user.data.data,
         userId: user.data.data.id,
+        fullName: user.data.data.fullname,
         books: [],
         redirect: '/myhome',
       });
-      console.log(user.data.data.id, ' this is response');
+      console.log(user.data.data, '<=== this is response');
       this.getBooksByAPI(user.data.data.id);
     } catch (err) {
       console.log('error', err);
     }
   }
 
-
+ 
   addBook = async (e, newBook) => {
     e.preventDefault();
     console.log(newBook);
     const moreProps = {
       book_id: generateRandomId(BOOK_ID_LENGTH, BOOK_ID_CHAR),
       user_id: this.state.userId,
+      requested_by: [],
+      lend_to: null,
+      user : this.state.currentUser,
     };
     newBook = { ...newBook, ...moreProps };
     console.log({ newBook });
@@ -93,10 +92,6 @@ export default class App extends Component {
         newBook
       );
 
-      // we are emptying all the dogs that are living in state into a new array,
-      // and then adding the dog we just created to the end of it
-      // the new dog which is called parsedResponse.data
-
       console.log(createdBookResponse.data.data, ' this is response');
       this.setState({
         books: [...this.state.books, createdBookResponse.data.data],
@@ -104,9 +99,8 @@ export default class App extends Component {
     } catch (err) {
       console.log('error', err);
     }
+   
   };
-
-
 
   getBooksByAPI = async (userId) => {
     console.log(`In getBooks ${userId}`);
@@ -115,8 +109,8 @@ export default class App extends Component {
       API = process.env.REACT_APP_FLASK_API_URL + '/api/books/'
     else {
       API = process.env.REACT_APP_FLASK_API_URL + `/api/mybooks/user/${userId}`;
-
     }
+    
     try {
       console.log(API);
       const parsedBooks = await axios(API);
@@ -142,20 +136,21 @@ export default class App extends Component {
       alertMessage,
       books,
       userId,
+      currentUser,
       fullName
     } = this.state;
 
     const displayName = fullName;
     const isAuthenticated = (userId && userId !== '')
     console.log('IsAuthenticated', isAuthenticated)
+    console.log(this.state)
+      console.log(fullName)
     return (
       <>
         <div className='App'>
-          <Navigation {...{ router, isAuthenticated, displayName }}
+          <Navigation {...{ router, isAuthenticated, fullName }}
           />
-
           <div className="container">
-
             <Route path='/' exact render={(props) => {
               return (
                 <div>
@@ -182,12 +177,12 @@ export default class App extends Component {
             />
 
             <Route path='/home' render={(props) => {
-              return <BookContainer books={this.state.books} />;
+              return <BookContainer isAuthenticated={isAuthenticated} books={this.state.books} />;
             }} />
 
-            <Route path='/mybooks' render={(props) => {
+            <Route path='/mybooks' exact {...{isAuthenticated }} render={(props) => {
               console.log('Under myhome');
-              return <BookContainer books={this.state.books} />;
+              return <BookContainer isAuthenticated={isAuthenticated} books={this.state.books} />;
             }} />
 
             <Route path='/login' exact render={(props) => {
@@ -201,9 +196,8 @@ export default class App extends Component {
               }
             }} />
 
-
             <Route path='/addbooks' exact {...{isAuthenticated }} render={(props) => {
-              return <AddBooks />;
+              return <AddBooks isAuthenticated={isAuthenticated} addBook={this.addBook} openAndEdit={this.openAndEdit} />;
             }} />
 
           </div>
