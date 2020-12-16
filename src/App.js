@@ -149,7 +149,7 @@ export default class App extends Component {
             <Route path='/' exact render={(props) => {
 
               const availableBooks = books
-                .filter(b => !b.lent_to)
+                .filter(b => !b.lend_to)
                 .filter(b => b.user.userId !== userId);
               return (
                 <div>
@@ -181,10 +181,10 @@ export default class App extends Component {
 
             <Route path='/mybooks' exact {...{ isAuthenticated }} render={(props) => {
              
-              const myUnlentBooks = myBooks.filter(b => !b.lent_to);
+              const myUnlentBooks = myBooks.filter(b => !b.lend_to);
               console.log(myUnlentBooks, '<==Unlent');
 
-              const myLentBooks = myBooks.filter(b => b.lent_to);
+              const myLentBooks = myBooks.filter(b => b.lend_to);
               console.log(myLentBooks, '<==lent');
 
               const requestedBooks = books.filter(
@@ -192,7 +192,7 @@ export default class App extends Component {
 
               console.log(requestedBooks, '<==Request');
               const booksBorrowed = books.filter(
-                b => b.lent_to && b.lent_to.userId === userId
+                b => b.lend_to && b.lend_to.userId === userId
               );
               console.log(booksBorrowed, '<==Borrowed');
               return (
