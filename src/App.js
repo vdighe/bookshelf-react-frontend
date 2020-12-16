@@ -170,7 +170,7 @@ export default class App extends Component {
             />
           </div>
 
-          <div className="container">
+          <div className="posts">
             <Route path='/' exact render={(props) => {
 
               const availableBooks = books

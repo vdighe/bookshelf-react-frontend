@@ -12,7 +12,7 @@ export default class BookContainer extends Component {
         <h2 class="ui header">{this.props.title}</h2>
         </div>
 
-        <Grid columns={2} divided textAlign='center' style={{ height: '100%' }} verticalAlign='top' stackable>
+        <Grid columns={2} centered textAlign='center' style={{ height: '100%' }} verticalAlign='top' doubling >
           <Grid.Row>
             <Grid.Column>
               <BookList {...this.props} books={this.props.books} addBook={this.props.addBook} deleteBook={this.deleteBook} />

@@ -17,7 +17,7 @@ export default class Register extends Component {
     }
     render() {
         return (
-            <div>
+            <div className='form'>
                 <div class="ui medium header">Register for BookShelf</div>
                 <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='top' stackable>
                     <Grid.Row>

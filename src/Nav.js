@@ -31,10 +31,11 @@ export default class Navigation extends Component {
         return (
             <div>
 
-            <Menu>
+            <Menu className="nav-bar">
                 <Menu >
                     <Menu.Item
                         as={NavLink} to="/home"
+                        icon='home'
                         name='home'
                         active={activeItem === 'home'}
                         onClick={this.handleItemClick}
@@ -62,6 +63,7 @@ export default class Navigation extends Component {
                     {isAuthenticated ? (
                         <Menu.Item 
                             href={`${process.env.PUBLIC_URL}/logout`}
+                            icon='Sign-out'
                             onSelect={this.close}
                             onClick={this.handleItemClick}
                         >
@@ -69,6 +71,7 @@ export default class Navigation extends Component {
                     </Menu.Item>) : (
                             <Menu.Item
                                 as={NavLink} to="/login"
+                                icon='sign-in'
                                 name='Login'
                                 active={activeItem === 'login'}
                                 onSelect={this.close}
