@@ -84,8 +84,8 @@ export default class AddBooks extends Component {
         console.log(isAuthenticated, '<====In AddBooks')
         return (
             <div>
-                <h3>Search to add books you own</h3>
-
+   
+                <h2 class="ui header">Search to add books you own</h2>
                 <Menu secondary>
                     <Menu.Item
                         name='Keywords'

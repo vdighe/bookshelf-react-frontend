@@ -29,6 +29,7 @@ export default class Navigation extends Component {
         } = this.props;
         console.log(this.props);
         return (
+            <div>
 
             <Menu>
                 <Menu >
@@ -62,7 +63,7 @@ export default class Navigation extends Component {
                         <Menu.Item 
                             href={`${process.env.PUBLIC_URL}/logout`}
                             onSelect={this.close}
-
+                            onClick={this.handleItemClick}
                         >
                             Logout
                     </Menu.Item>) : (
@@ -74,10 +75,19 @@ export default class Navigation extends Component {
                                 onClick={this.handleItemClick}
                             />
                         )}
-
-                </Menu.Menu >
+                        <Menu.Item
+                            as={NavLink} to="/register"
+                            name='Register'
+                            active={activeItem === 'register'}
+                            onSelect={this.close}
+                            onClick={this.handleItemClick}
+                        />
+                    </Menu.Menu >
 
             </Menu>
+
+
+            </div>
 
         )
     }

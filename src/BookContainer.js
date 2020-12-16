@@ -7,8 +7,11 @@ export default class BookContainer extends Component {
   render() {
     console.log(this.props.books.length);
     return (
-      <div style={{ margin: "0 auto" }}>
-        <h2 style={{ textAlign: "center", margin: "20px auto auto" }}> Book Shelf </h2>
+      <div style={{ margin: "10px auto auto" }}>
+        <div>
+        <h2 class="ui header">{this.props.title}</h2>
+        </div>
+
         <Grid columns={2} divided textAlign='center' style={{ height: '100%' }} verticalAlign='top' stackable>
           <Grid.Row>
             <Grid.Column>

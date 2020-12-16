@@ -10,6 +10,8 @@ import Login from './LoginForm';
 import Navigation from './Nav.js';
 import Intro from './intro.js';
 import AddBooks from './AddBooks';
+import Register from './Register';
+
 
 // Routes
 import { Redirect, Route } from 'react-router-dom';
@@ -35,13 +37,33 @@ export default class App extends Component {
     alertMessage: '',
   }
 
-
   componentDidMount() {
     console.log(`VAISHALI MOUNT ${this.state.userId}`);
     this.getBooksByAPI(this.state.userId);
   }
 
-
+  // Registration work
+  handleRegisterSubmit = async (e, newUser) => {
+    e.preventDefault();
+    console.log(newUser);
+    try {
+      const user = await axios.post(
+        process.env.REACT_APP_FLASK_API_URL + '/api/register',
+        newUser
+      );
+      console.log(user.data.data, ' this is response');
+      this.setState({
+        currentUser: user.data.data,
+        userId: user.data.data.id,
+        fullName: user.data.data.fullname,
+        books: [],
+        redirect: '/home/',
+      });
+      this.getBooksByAPI(user.data.data.id);
+    } catch (err) {
+      console.log('error', err);
+    }
+  }
   //Login User http://localhost:8000/api/login
   handleSubmit = async (e, currentUser) => {
     e.preventDefault();
@@ -57,7 +79,7 @@ export default class App extends Component {
         userId: user.data.data.id,
         fullName: user.data.data.fullname,
         books: [],
-        redirect: '/',
+        redirect: '/home/',
       });
       console.log(user.data.data, '<=== this is response');
       this.getBooksByAPI(user.data.data.id);
@@ -141,10 +163,13 @@ export default class App extends Component {
     const myBooks = books.filter(b => b.user.id === userId);
     console.log(myBooks, '<== mybooks');
     return (
-      <>
+      <div>
         <div className='App'>
-          <Navigation {...{ router, isAuthenticated, fullName }}
-          />
+          <div className='fp-panel-main'>
+            <Navigation {...{ router, isAuthenticated, fullName }}
+            />
+          </div>
+
           <div className="container">
             <Route path='/' exact render={(props) => {
 
@@ -165,9 +190,9 @@ export default class App extends Component {
                     </div>
                   ) : (
                       <div>
-                        <h3>Books currently available</h3>
+                        <h2 class="ui header">Books currently available</h2>
                         <br />
-                        <BookContainer isAuthenticated={isAuthenticated} books={availableBooks} />;
+                        <BookContainer title='' isAuthenticated={isAuthenticated} books={availableBooks} />;
                       </div>
                     )}
                 </div>
@@ -175,12 +200,12 @@ export default class App extends Component {
             }}
             />
 
-            <Route path='/home' render={(props) => {
-              return <BookContainer isAuthenticated={isAuthenticated} books={this.state.books} />;
+            <Route path='/home' exact render={(props) => {
+              return <BookContainer title='BookShelf' isAuthenticated={isAuthenticated} books={this.state.books} />;
             }} />
 
             <Route path='/mybooks' exact {...{ isAuthenticated }} render={(props) => {
-             
+
               const myUnlentBooks = myBooks.filter(b => !b.lend_to);
               console.log(myUnlentBooks, '<==Unlent');
 
@@ -188,7 +213,7 @@ export default class App extends Component {
               console.log(myLentBooks, '<==lent');
 
               const requestedBooks = books.filter(
-              b => b.requested_by && b.requested_by.filter(r => r === userId).length);
+                b => b.requested_by && b.requested_by.filter(r => r === userId).length);
 
               console.log(requestedBooks, '<==Request');
               const booksBorrowed = books.filter(
@@ -197,48 +222,45 @@ export default class App extends Component {
               console.log(booksBorrowed, '<==Borrowed');
               return (
                 <div>
-                  <h3>My Books (On Shelf)</h3>
+                  <h2 class="ui header">My Books (On Shelf)</h2>
                   <br />
                   {myUnlentBooks.length === 0 ? (
                     <div className="text-center">
                       <p>No books here</p>
                     </div>
                   ) : (
-                      <BookContainer isAuthenticated={isAuthenticated} books={myUnlentBooks} />
+                      <BookContainer title='' isAuthenticated={isAuthenticated} books={myUnlentBooks} />
                     )}
                   <hr />
-                  <h3>Books I have Borrowed</h3>
+                  <h2 class="ui header">Books I have Borrowed</h2>
                   <br />
                   {booksBorrowed.length === 0 ? (
                     <div className="text-center">
                       <p>No books here</p>
                     </div>
                   ) : (
-                      <BookContainer isAuthenticated={isAuthenticated} books={booksBorrowed} />
-
+                      <BookContainer title='' isAuthenticated={isAuthenticated} books={booksBorrowed} />
                     )}
                   <hr />
-                  <h3>My Books (Lent Out)</h3>
+                  <h2 class="ui header">My Books (Lent Out)</h2>
                   <br />
                   {myLentBooks.length === 0 ? (
                     <div className="text-center">
                       <p>No books here</p>
                     </div>
                   ) : (
-                      <BookContainer isAuthenticated={isAuthenticated} books={myLentBooks} />
-
-
+                      <BookContainer title='' isAuthenticated={isAuthenticated} books={myLentBooks} />
                     )}
                   <hr />
-                  <h3>Books I have Requested</h3>
+                  <h2 class="ui header">Books I have Requested</h2>
+
                   <br />
                   {requestedBooks.length === 0 ? (
                     <div className="text-center">
                       <p>No books here</p>
                     </div>
                   ) : (
-                      <BookContainer isAuthenticated={isAuthenticated} books={requestedBooks} />
-
+                      <BookContainer title='' isAuthenticated={isAuthenticated} books={requestedBooks} />
                     )}
                 </div>
               );
@@ -256,13 +278,33 @@ export default class App extends Component {
               }
             }} />
 
+            <Route path='/logout' exact render={(props) => {
+              console.log('I am here logout');
+
+            }} />
+
+            <Route path="/register" exact render={(props) => {
+              console.log('I am here register');
+              if (this.state.redirect) {
+                console.log("IM HERE");
+                return <Redirect to={this.state.redirect} />
+
+              } else {
+                return <Register {...props}
+                  onSubmit={this.handleRegisterSubmit} />;
+              }
+            }} />
+
             <Route path='/addbooks' exact {...{ isAuthenticated }} render={(props) => {
-              return <AddBooks {...this.state} isAuthenticated={isAuthenticated} addBook={this.addBook} openAndEdit={this.openAndEdit} />;
+              return <AddBooks {...this.state}
+                isAuthenticated={isAuthenticated}
+                addBook={this.addBook}
+                openAndEdit={this.openAndEdit} />;
             }} />
 
           </div>
         </div>
-      </>
+      </div>
 
 
     );
