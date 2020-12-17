@@ -57,3 +57,10 @@ This project is a full-stack application with
     - Axios
     - BluePrint
     
+#### BookShelf Site Pictures
+
+### Author 
+*Vaishali Dighe-Phanse*
+
+### Issues, Resolutions and Future Enhancements
+##### Due to lack of time, the  update/edit feature of the book model was only implmented at the backend. Ideally, one should be able to come up with such functionality through the frontend. Also, another option for registration can be via social media accout.
