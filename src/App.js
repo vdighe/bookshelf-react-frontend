@@ -49,7 +49,10 @@ export default class App extends Component {
     try {
       const user = await axios.post(
         process.env.REACT_APP_FLASK_API_URL + '/api/register',
-        newUser
+        newUser,
+        {headers: {
+          'Content-Type': 'application/json'
+        }}
       );
       console.log(user.data.data, ' this is response');
       this.setState({
@@ -71,7 +74,10 @@ export default class App extends Component {
     try {
       const user = await axios.post(
         process.env.REACT_APP_FLASK_API_URL + '/api/login',
-        currentUser
+        currentUser,
+        {headers: {
+          'Content-Type': 'application/json'
+        }}
       );
       console.log(user.data.data, ' this is response');
       this.setState({
@@ -105,7 +111,10 @@ export default class App extends Component {
       // The createdDogResponse variable will store the response from the Flask API
       const createdBookResponse = await axios.post(
         process.env.REACT_APP_FLASK_API_URL + '/api/books/',
-        newBook
+        newBook,
+        {headers: {
+          'Content-Type': 'application/json'
+        }}
       );
 
       console.log(createdBookResponse.data.data, ' this is response');
